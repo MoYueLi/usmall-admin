@@ -7,7 +7,7 @@
       </el-table-column>
       <el-table-column label="规格属性">
         <template slot-scope="scope">
-          <el-tag v-for="item in JSON.parse(scope.row.attrs)" :key="item">{{item}}</el-tag>
+          <el-tag v-for="item in scope.row.attrs" :key="item">{{item}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="状态" width="100">

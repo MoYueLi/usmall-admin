@@ -9,6 +9,9 @@ const state = {
 
 const mutations = {
   setSpecsList (state, arr) {
+    arr.forEach(i => {
+      i.attrs = JSON.parse(i.attrs)
+    })
     state.list = arr
   },
   setSpecsTotal (state, sum) {
@@ -21,11 +24,17 @@ const mutations = {
 
 const actions = {
   // 请求商品规格数据 (分页方式)
-  reqSpecsList (context) {
-    const params = {
-      size: context.state.size,
-      page: context.state.page
+  reqSpecsList (context, bool) {
+    let params
+    if (bool) {
+      params = {}
+    } else {
+      params = {
+        size: context.state.size,
+        page: context.state.page
+      }
     }
+
     reqSpecsList(params).then(res => {
       // 如果删除最后一页的最后一个，自动去请求前面一页的
       if (res.data.list && !res.data.list.length && context.state.page > 1) {
