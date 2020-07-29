@@ -362,3 +362,38 @@ export const reqGoodsDelete = (data) => axios({
   method: 'post',
   data: Qs.stringify(data)
 })
+
+// ----------------秒杀活动
+// 添加秒杀活动
+export const reqSecKillAdd = (data) => axios({
+  url: baseUrl + '/api/seckadd',
+  method: 'post',
+  data: Qs.stringify(data)
+})
+
+// 获取秒杀活动列表
+export const reqSecKillList = () => axios({
+  url: baseUrl + '/api/secklist',
+  method: 'get'
+})
+
+// 获取一条秒杀活动信息
+export const reqSecKillDetail = (params) => axios({
+  url: baseUrl + '/api/seckinfo',
+  method: 'get',
+  params
+})
+
+// 修改秒杀活动
+export const reqSecKillEdit = (data) => axios({
+  url: baseUrl + '/api/seckedit',
+  method: 'post',
+  data: Qs.stringify(data)
+})
+
+// 删除秒杀活动
+export const reqSecKillDelete = (data) => axios({
+  url: baseUrl + '/api/seckdelete',
+  method: 'post',
+  data: Qs.stringify(data)
+})

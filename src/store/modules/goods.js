@@ -19,15 +19,15 @@ const mutations = {
   }
 }
 const actions = {
-  setGoodsList (context, bool) {
+  setGoodsList (context, data) {
     let params
-    if (!bool) {
+    if (!data) {
       params = {
         size: context.state.size,
         page: context.state.page
       }
     } else {
-      params = {}
+      params = data
     }
     reqGoodsList(params).then(res => {
       if (res.data.code === 200) {

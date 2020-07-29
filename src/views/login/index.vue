@@ -2,8 +2,12 @@
   <div class="login">
     <div class="con">
       <h3>登录</h3>
-      <el-input v-model="user.username" placeholder="请输入用户名"></el-input>
-      <el-input placeholder="请输入密码" v-model="user.password" show-password></el-input>
+      <el-col :span="13">
+        <el-input v-model="user.username" placeholder="请输入用户名"></el-input>
+      </el-col>
+      <el-col :span="13">
+        <el-input placeholder="请输入密码" v-model="user.password" show-password></el-input>
+      </el-col>
       <div class="btn-box">
         <el-button type="primary" @click="login">登录</el-button>
       </div>
@@ -13,6 +17,7 @@
 <script>
 import { reqUserLogin } from '@/utils/request'
 import { successAlert, warningAlert } from '@/utils/alert'
+import { mapActions } from 'vuex'
 
 export default {
   components: {},
@@ -25,6 +30,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      changeUser: 'setUser'
+    }),
     empty () {
       this.user = {
         username: '',
@@ -35,7 +43,8 @@ export default {
       reqUserLogin(this.user).then(res => {
         if (res.data.code === 200) {
           successAlert(res.data.msg)
-          this.$router.push('/')
+          this.changeUser(res.data.list)
+          this.$router.push('/home')
           this.empty()
         } else {
           warningAlert(res.data.msg)
@@ -55,6 +64,11 @@ export default {
   }
 
   .con {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
     width: 400px;
     padding: 20px;
     background: #fff;
@@ -77,5 +91,12 @@ export default {
 
   .btn-box {
     text-align: center;
+  }
+  .el-button{
+    width: 100px;
+    margin-top: 20px;
+  }
+  .el-input{
+    margin-top: 20px;
   }
 </style>

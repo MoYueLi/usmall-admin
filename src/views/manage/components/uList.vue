@@ -34,7 +34,6 @@ export default {
   name: 'uList',
   data () {
     return {
-      curPage: 1
     }
   },
   computed: {
@@ -44,15 +43,6 @@ export default {
       total: 'user/total'
     })
   },
-  watch: {
-    // total () {
-    //   if (this.total === (this.curPage - 1) * this.list.limit && this.total !== 0) {
-    //     this.curPage -= 1
-    //     this.list.start = (this.curPage - 1) * this.list.limit
-    //     this.reqList()
-    //   }
-    // }
-  },
   methods: {
     ...mapActions({
       reqList: 'user/reqUserList',
@@ -61,22 +51,13 @@ export default {
     }),
     cPage (p) {
       this.changePage(p)
-      this.curPage = p
       this.reqList()
     },
     del (id) {
       reqUserDelete({ uid: id }).then(res => {
         if (res.data.code === 200) {
           successAlert(res.data.msg)
-          // console.log('this.total' + (this.total % this.size))
-          // console.log('this.curPage' + this.curPage)
-          if ((this.total % this.size) === 1 && this.curPage > 1) {
-            // this.changePage(this.curPage - 1)
-            this.reqList(this.curPage - 1)
-            console.log('this.curPage' + (this.curPage - 1))
-          } else {
-            this.reqList()
-          }
+          this.reqList()
           this.reqTotal()
         } else {
           warningAlert(res.data.msg)
@@ -88,9 +69,10 @@ export default {
     }
   },
   mounted () {
+    console.log(this.list)
     if (!this.list.length) {
-      this.reqList()
       this.reqTotal()
+      this.reqList()
     }
   }
 }

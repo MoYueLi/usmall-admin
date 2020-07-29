@@ -1,51 +1,44 @@
 <template>
   <div>
     <el-container class="mainView">
-<!--      <el-scrollbar wrap-class="scrollbar-wrapper">-->
+      <!--      <el-scrollbar wrap-class="scrollbar-wrapper">-->
       <el-aside class="aside" width="150px">
-
-          <el-menu
-            default-active="2"
-            class="el-menu-vertical-demo"
-            @open="handleOpen"
-            @close="handleClose"
-            background-color="#545c64"
-            text-color="#fff"
-            router
-            active-text-color="#ffd04b">
-            <el-menu-item index="/home">
-              <template slot="title">
-                <i class="el-icon-menu"></i>
-                <span>首页</span>
-              </template>
+        <el-menu
+          default-active="2"
+          class="el-menu-vertical-demo"
+          background-color="#545c64"
+          text-color="#fff"
+          router
+          :unique-opened="true"
+          active-text-color="#ffd04b">
+          <el-menu-item index="/home">
+            <template slot="title">
+              <i class="el-icon-menu"></i>
+              <span>首页</span>
+            </template>
+          </el-menu-item>
+          <el-submenu v-if="user.menus[index].children" :index="item.id+''" :key="index" v-for="(item, index) in user.menus">
+            <template slot="title">
+              <i :class="item.icon"></i>
+              <span slot="title">{{item.title}}</span>
+            </template>
+            <el-menu-item v-for="child in item.children" :key="child.id" :index="child.url">{{child.title}}
             </el-menu-item>
-            <el-submenu index="4">
-              <template slot="title">
-                <i class="el-icon-setting"></i>
-                <span slot="title">系统设置</span>
-              </template>
-              <el-menu-item index="/menu">菜单管理</el-menu-item>
-              <el-menu-item index="/role">角色管理</el-menu-item>
-              <el-menu-item index="/manage">管理员管理</el-menu-item>
-            </el-submenu>
-            <el-submenu index="2">
-              <template slot="title">
-                <i class="el-icon-setting"></i>
-                <span slot="title">商城管理</span>
-              </template>
-              <el-menu-item index="/cate" :disabled="$route.path=='/cate'">商品分类</el-menu-item>
-              <el-menu-item index="/spec">商品规格</el-menu-item>
-              <el-menu-item index="/goods">商品管理</el-menu-item>
-              <el-menu-item index="/member">会员管理</el-menu-item>
-              <el-menu-item index="/banner">轮播图管理</el-menu-item>
-              <el-menu-item index="/seckill">秒杀活动</el-menu-item>
-            </el-submenu>
-          </el-menu>
+          </el-submenu>
+          <el-menu-item v-if="!user.menus[index].children" v-for="(child, index) in user.menus" :key="index"
+                        :index="child.url">{{child.title}}
+          </el-menu-item>
+        </el-menu>
 
       </el-aside>
-<!--      </el-scrollbar>-->
+      <!--      </el-scrollbar>-->
       <el-container>
-        <el-header>头部</el-header>
+        <el-header>
+          <div class="header-con">
+            <span>{{user.username}}</span>
+            <el-button type="primary" @click="exit">退出</el-button>
+          </div>
+        </el-header>
         <el-main>
           <el-breadcrumb separator-class="el-icon-arrow-right">
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
@@ -59,17 +52,28 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+
 export default {
   name: 'index',
   data () {
     return {}
   },
+  computed: {
+    ...mapGetters({
+      user: 'admin'
+    })
+  },
   methods: {
-    handleOpen (key, keyPath) {
-      // console.log(key, keyPath)
+    ...mapActions({
+      changeUser: 'setUser'
+    }),
+    exit () {
+      this.changeUser(null)
+      this.$router.push('/login')
     },
-    handleClose (key, keyPath) {
-      // console.log(key, keyPath)
+    hasChildren (i) {
+      return this.user.menus[i].children
     }
   },
   mounted () {
@@ -93,11 +97,22 @@ export default {
     background: #b3c0d1;
     overflow: hidden;
   }
-  .view{
+
+  .view {
     padding-top: 20px;
   }
-  .mainView{
+
+  .mainView {
     height: 100vh;
+  }
+
+  .header-con {
+    float: right;
+  }
+
+  .header-con span {
+    line-height: 60px;
+    color: #ffffff;
   }
 
 </style>

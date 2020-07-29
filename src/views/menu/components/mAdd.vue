@@ -82,7 +82,8 @@ export default {
         'el-icon-setting',
         'el-icon-s-help',
         'el-icon-s-operation',
-        'el-icon-s-grid'
+        'el-icon-s-grid',
+        'el-icon-s-goods'
       ]
     }
   },

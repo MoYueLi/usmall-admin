@@ -49,8 +49,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters({
-    })
+    ...mapGetters({})
   },
   methods: {
     ...mapActions({
@@ -75,6 +74,10 @@ export default {
       }
     },
     add () {
+      if (this.attrs.some(item => item.name === '')) {
+        warningAlert('属性值不能为空')
+        return
+      }
       let formAttrs = []
       for (let i in this.attrs) {
         if (this.attrs[i]) {
