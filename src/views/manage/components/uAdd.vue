@@ -1,16 +1,16 @@
 <template>
   <div>
     <el-dialog :title="info.title" @close="empty" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="所属角色" label-width="80px">
+      <el-form ref="manageForm" :model="form" :rules="rules">
+        <el-form-item label="所属角色" label-width="80px" prop="roleid">
           <el-select v-model="form.roleid">
             <el-option v-for="item in list" :key="item.id" :label="item.rolename" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="用户名" label-width="80px">
+        <el-form-item label="用户名" label-width="80px" prop="username">
           <el-input v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" label-width="80px">
+        <el-form-item label="密码" label-width="80px" prop="password">
           <el-input v-model="form.password" show-password autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="状态" label-width="80px">
@@ -43,6 +43,17 @@ export default {
         username: '',
         password: '',
         status: 1
+      },
+      rules: {
+        roleid: [
+          { required: true, message: '请输入角色名称', trigger: 'change' }
+        ],
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ]
       }
     }
   },
@@ -72,19 +83,25 @@ export default {
       }
     },
     add () {
-      reqUserAdd(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          // 清空
-          this.empty()
-          // 弹框消失
-          this.cancel()
-          // 获取管理员数据
-          this.reqUserList()
-          // 获取管理员数据总数
-          this.reqUserTotal()
+      this.$refs['manageForm'].validate((valid) => {
+        if (valid) {
+          reqUserAdd(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              // 清空
+              this.empty()
+              // 弹框消失
+              this.cancel()
+              // 获取管理员数据
+              this.reqUserList()
+              // 获取管理员数据总数
+              this.reqUserTotal()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     },
@@ -95,17 +112,23 @@ export default {
       })
     },
     update () {
-      reqUserUpdate(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          // 清空
-          this.empty()
-          // 弹框消失
-          this.cancel()
-          // 获取管理员数据
-          this.reqUserList()
+      this.$refs.manageForm.validate((valid) => {
+        if (valid) {
+          reqUserUpdate(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              // 清空
+              this.empty()
+              // 弹框消失
+              this.cancel()
+              // 获取管理员数据
+              this.reqUserList()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     }

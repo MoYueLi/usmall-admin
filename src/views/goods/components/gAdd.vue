@@ -1,30 +1,30 @@
 <template>
   <div class="uploadBox">
     <el-dialog width="60%" :title="info.title" @close="empty" :visible.sync="info.show" @opened="creatEditor">
-      <el-form :model="form">
-        <el-form-item label="一级分类" label-width="80px">
+      <el-form ref="goodsForm" :model="form" :rules="rules">
+        <el-form-item label="一级分类" label-width="80px" prop="first_cateid">
           <el-select v-model="form.first_cateid" @change="changeFirstId()">
             <el-option label="请选择" value disabled></el-option>
             <el-option v-for="item in cateList" :key="item.id" :label="item.catename" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="二级分类" label-width="80px">
+        <el-form-item label="二级分类" label-width="80px" prop="second_cateid">
           <el-select v-model="form.second_cateid">
             <el-option label="请选择" value="" disabled></el-option>
             <el-option v-for="item in cateArr" :key="item.id" :label="item.catename" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="商品名称" label-width="80px">
+        <el-form-item label="商品名称" label-width="80px" prop="goodsname">
           <el-input v-model="form.goodsname" autocomplete="off">
           </el-input>
         </el-form-item>
-        <el-form-item label="价格" label-width="80px">
+        <el-form-item label="价格" label-width="80px" prop="price">
           <el-input v-model="form.price" autocomplete="off">
           </el-input>
         </el-form-item>
-        <el-form-item label="市场价格" label-width="80px">
+        <el-form-item label="市场价格" label-width="80px" prop="market_price">
           <el-input v-model="form.market_price" autocomplete="off">
           </el-input>
         </el-form-item>
@@ -37,14 +37,14 @@
             <i class="el-icon-plus"></i>
           </el-upload>
         </el-form-item>
-        <el-form-item label="商品规格" label-width="80px">
+        <el-form-item label="商品规格" label-width="80px" prop="specsid">
           <el-select v-model="form.specsid" @change="changeSpecsId()">
             <el-option label="请选择" value="" disabled></el-option>
             <el-option v-for="item in specsList" :key="item.id" :label="item.specsname" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="规格属性" label-width="80px">
+        <el-form-item label="规格属性" label-width="80px" prop="specsattr">
           <el-select v-model="form.specsattr" multiple>
             <el-option label="请选择" value="" disabled></el-option>
             <el-option v-for="item in specsArr" :key="item" :label="item" :value="item">
@@ -107,7 +107,17 @@ export default {
       // 规格属性二级分类
       specsArr: [],
       // 富文本编辑器
-      editor: null
+      editor: null,
+      // 表单验证
+      rules: {
+        first_cateid: [{ required: true, message: '请选择一级分类', trigger: 'change' }],
+        second_cateid: [{ required: true, message: '请选择二级分类', trigger: 'change' }],
+        goodsname: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
+        price: [{ required: true, message: '请输入价格', trigger: 'blur' }],
+        market_price: [{ required: true, message: '请输入市场价格', trigger: 'blur' }],
+        specsid: [{ required: true, message: '请选择商品规格', trigger: 'change' }],
+        specsattr: [{ required: true, message: '请选择商品规格属性', trigger: 'change' }]
+      }
     }
   },
   computed: {
@@ -160,13 +170,21 @@ export default {
     add () {
       this.form.description = this.editor.txt.html()
       this.form.specsattr = JSON.stringify(this.form.specsattr)
-      reqGoodsAdd(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.cancel()
-          this.reqGoodsList()
-          this.reqGoodsTotal()
+      this.$refs.goodsForm.validate((valid) => {
+        if (valid) {
+          reqGoodsAdd(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.cancel()
+              this.reqGoodsList()
+              this.reqGoodsTotal()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
+        } else {
+          warningAlert('不能有选项为空！')
         }
       })
     },
@@ -185,14 +203,20 @@ export default {
     update () {
       this.form.description = this.editor.txt.html()
       this.form.specsattr = JSON.stringify(this.form.specsattr)
-      reqGoodsEdit(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.cancel()
-          this.reqGoodsList()
+      this.$refs.goodsForm.validate((valid) => {
+        if (valid) {
+          reqGoodsEdit(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.cancel()
+              this.reqGoodsList()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     },

@@ -1,10 +1,24 @@
 import axios from 'axios'
 import Qs from 'qs'
+import store from '../store/index'
+import router from '../router'
+
+// 在请求前加入请求头
+axios.interceptors.request.use(config => {
+  if (config.url !== baseUrl + '/api/userlogin') {
+    config.headers.authorization = store.state.admin.token
+  }
+  return config
+})
 
 axios.interceptors.response.use(res => {
   console.group('请求数据' + res.config.url)
   console.log(res)
   console.groupEnd()
+  if (res.data.msg === '登录已过期或访问权限受限') {
+    router.push('login')
+    return
+  }
   return res
 })
 

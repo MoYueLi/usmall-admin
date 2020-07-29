@@ -1,13 +1,13 @@
 <template>
-  <div>
+  <div class="add">
     <el-dialog :title="info.title" @close="empty" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="规格名称" label-width="80px">
+      <el-form ref="specForm" :model="form" :rules="rules">
+        <el-form-item label="规格名称" label-width="80px" prop="specsname">
           <el-input v-model="form.specsname" autocomplete="off"></el-input>
         </el-form-item>
         <div v-for="(item, index) in attrs" :key="item.key">
           <el-form-item label="规格属性" label-width="80px">
-            <el-input style="width: 410px;" v-model="item.name" autocomplete="off"></el-input>
+            <el-input v-model="item.name" autocomplete="off"></el-input>
             <el-button v-if="index === 0" type="primary" @click="addSpecsAttr(index)">新增规格属性</el-button>
             <el-button v-else type="danger" @click="del(index)">删除</el-button>
           </el-form-item>
@@ -45,7 +45,12 @@ export default {
       attrs: [{
         name: '',
         key: 0
-      }]
+      }],
+      rules: {
+        specsname: [
+          { required: true, message: '请输入规格名称', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -85,19 +90,29 @@ export default {
         }
       }
       this.form.attrs = JSON.stringify(formAttrs)
-      reqSpecsAdd(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.cancel()
-          this.reqList()
-          this.reqSpecsTotal()
+      this.$refs.specForm.validate((valid) => {
+        if (valid) {
+          reqSpecsAdd(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.cancel()
+              this.reqList()
+              this.reqSpecsTotal()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     },
     update () {
+      if (this.attrs.some(item => item.name === '')) {
+        warningAlert('属性值不能为空')
+        return
+      }
       let formAttrs = []
       for (let i in this.attrs) {
         if (this.attrs[i]) {
@@ -105,12 +120,18 @@ export default {
         }
       }
       this.form.attrs = JSON.stringify(formAttrs)
-      reqSpecsEdit(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.cancel()
-          this.reqList()
+      this.$refs.specForm.validate((valid) => {
+        if (valid) {
+          reqSpecsEdit(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.cancel()
+              this.reqList()
+            }
+          })
+        } else {
+          warningAlert('不能有选项为空！')
         }
       })
     },
@@ -146,6 +167,16 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="stylus">
+  .add >>> .el-form-item__content {
+    display: flex !important;
+  }
 
+  .add >>> .el-button {
+    width: auto;
+  }
+
+  .add >>> .el-input {
+    flex 1
+  }
 </style>

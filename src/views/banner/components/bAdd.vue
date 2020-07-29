@@ -1,8 +1,8 @@
 <template>
   <div class="uploadBox">
     <el-dialog :title="info.title" @close="empty" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="标题" label-width="80px">
+      <el-form ref="bannerForm" :model="form" :rules="rules">
+        <el-form-item label="标题" label-width="80px" prop="title">
           <el-input v-model="form.title" autocomplete="off">
           </el-input>
         </el-form-item>
@@ -44,7 +44,11 @@ export default {
         img: null,
         status: 1
       },
-      imageUrl: ''
+      imageUrl: '',
+      // 表单验证
+      rules: {
+        title: [{ required: true, message: '请输入轮播名称', trigger: 'blur' }]
+      }
     }
   },
   computed: {},
@@ -84,22 +88,34 @@ export default {
       this.form.img = file
     },
     add () {
-      reqBannerAdd(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.cancel()
-          this.reqList()
+      this.$refs.bannerForm.validate((valid) => {
+        if (valid) {
+          reqBannerAdd(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.cancel()
+              this.reqList()
+            }
+          })
+        } else {
+          warningAlert('不能有选项为空！')
         }
       })
     },
     update () {
-      reqBannerEdit(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.cancel()
-          this.reqList()
+      this.$refs.bannerForm.validate((valid) => {
+        if (valid) {
+          reqBannerEdit(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.cancel()
+              this.reqList()
+            }
+          })
+        } else {
+          warningAlert('不能有选项为空！')
         }
       })
     },

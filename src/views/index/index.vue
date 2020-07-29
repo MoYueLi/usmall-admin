@@ -44,7 +44,9 @@
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item>{{$route.name}}</el-breadcrumb-item>
           </el-breadcrumb>
-          <router-view class="view"/>
+          <transition enter-active-class="animate__animated animate__fadeInRight">
+            <router-view class="view"/>
+          </transition>
         </el-main>
       </el-container>
     </el-container>
@@ -114,5 +116,4 @@ export default {
     line-height: 60px;
     color: #ffffff;
   }
-
 </style>

@@ -9,8 +9,10 @@ import '../src/assets/css/reset.css'
 import store from '@/store'
 import filers from './filters/index'
 import comComponents from './components/index'
+import animated from 'animate.css'
 
 Vue.use(ElementUI)
+Vue.use(animated)
 
 Vue.config.productionTip = false
 

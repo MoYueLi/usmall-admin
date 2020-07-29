@@ -1,15 +1,15 @@
 <template>
   <div class="uploadBox">
     <el-dialog :title="info.title" @close="empty" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="上级分类" label-width="80px">
+      <el-form ref="cateForm" :model="form" :rules="rules">
+        <el-form-item label="上级分类" label-width="80px" prop="pid">
           <el-select v-model="form.pid" placeholder="请选上级">
             <el-option label="顶级分类" :value="0"></el-option>
             <el-option v-for="item in list" :key="item.id" :label="item.catename" :value="item.id">
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="分类名称" label-width="80px">
+        <el-form-item label="分类名称" label-width="80px" prop="catename">
           <el-input v-model="form.catename" autocomplete="off">
           </el-input>
         </el-form-item>
@@ -52,7 +52,15 @@ export default {
         img: null,
         status: 1
       },
-      imageUrl: ''
+      imageUrl: '',
+      rules: {
+        pid: [
+          { required: true, message: '请选择上级分类', trigger: 'change' }
+        ],
+        catename: [
+          { required: true, message: '请输入分类名称', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -98,25 +106,37 @@ export default {
       this.form.img = file
     },
     add () {
-      reqCateAdd(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.cancel()
-          this.reqList()
+      this.$refs.cateForm.validate((valid) => {
+        if (valid) {
+          reqCateAdd(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.cancel()
+              this.reqList()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     },
     update () {
-      reqCateEdit(this.form).then(res => {
-        if (res.data.code === 200) {
-          this.empty()
-          this.cancel()
-          this.reqList()
+      this.$refs.cateForm.validate((valid) => {
+        if (valid) {
+          reqCateEdit(this.form).then(res => {
+            if (res.data.code === 200) {
+              this.empty()
+              this.cancel()
+              this.reqList()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     },

@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-dialog :title="info.title" @close="empty" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="角色名称" label-width="80px">
+      <el-form ref="roleForm" :model="form" :rules="rules">
+        <el-form-item label="角色名称" label-width="80px" prop="rolename">
           <el-input v-model="form.rolename" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="角色权限" label-width="80px">
@@ -45,7 +45,12 @@ export default {
         children: 'children',
         label: 'title'
       },
-      defaultKey: []
+      defaultKey: [],
+      rules: {
+        rolename: [
+          { required: true, message: '请输入角色名称', trigger: 'blur' }
+        ]
+      }
     }
   },
   computed: {
@@ -72,19 +77,25 @@ export default {
       }
     },
     add () {
-      if (!this.form.rolename) {
-        warningAlert('角色名称不能为空')
+      this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys())
+      if (!this.form.menus) {
+        warningAlert('权限不能为空')
         return
       }
-      this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys())
-      reqRoleAdd(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.canel()
-          this.reqRoleList()
+      this.$refs['roleForm'].validate((valid) => {
+        if (valid) {
+          reqRoleAdd(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.canel()
+              this.reqRoleList()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     },
@@ -96,19 +107,25 @@ export default {
       })
     },
     update () {
-      if (!this.form.rolename) {
-        warningAlert('角色名称不能为空')
+      this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys())
+      if (!this.form.menus) {
+        warningAlert('权限不能为空')
         return
       }
-      this.form.menus = JSON.stringify(this.$refs.tree.getCheckedKeys())
-      reqRoleEdit(this.form).then(res => {
-        if (res.data.code === 200) {
-          successAlert(res.data.msg)
-          this.empty()
-          this.canel()
-          this.reqRoleList()
+      this.$refs['roleForm'].validate((valid) => {
+        if (valid) {
+          reqRoleEdit(this.form).then(res => {
+            if (res.data.code === 200) {
+              successAlert(res.data.msg)
+              this.empty()
+              this.canel()
+              this.reqRoleList()
+            } else {
+              warningAlert(res.data.msg)
+            }
+          })
         } else {
-          warningAlert(res.data.msg)
+          warningAlert('不能有选项为空！')
         }
       })
     }
