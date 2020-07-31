@@ -1,12 +1,13 @@
 <template>
   <div>
     <el-dialog :title="info.title" @close="empty" :visible.sync="info.show">
-      <el-form :model="form">
-        <el-form-item label="手机号" label-width="80px">
+      <el-form ref="memberForm" :model="form" :rules="rules">
+        <el-form-item label="手机号" label-width="80px"
+                      prop="phone">
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="昵称" label-width="80px">
-          <el-input v-model="form.nickname" autocomplete="off"></el-input>
+          <el-input v-model="form.nickname" autocomplete="off" prop="nickname"></el-input>
         </el-form-item>
         <el-form-item label="密码" label-width="80px">
           <el-input v-model="form.password" autocomplete="off"></el-input>
@@ -33,12 +34,28 @@ export default {
   props: ['info'],
   name: 'mEdit',
   data () {
+    let reg = /^1[3456789]\d{9}$/
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('请输入手机号'))
+      } else {
+        if (reg.test(value)) {
+          callback()
+        } else {
+          callback(new Error('请输入正确的手机号'))
+        }
+      }
+    }
     return {
       form: {
         nickname: '',
         phone: '',
         password: '',
         status: 1
+      },
+      rules: {
+        phone: [{ validator: validatePass, trigger: 'blur' }],
+        nickname: [{ required: true, message: '请输入昵称', trigger: 'blur' }]
       }
     }
   },

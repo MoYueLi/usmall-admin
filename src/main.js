@@ -26,7 +26,11 @@ for (let i in comComponents) {
   Vue.component(i, comComponents[i])
 }
 
+// 图片头部url
+// 测试
 Vue.prototype.$imgpre = 'http://localhost:3000'
+// 线上
+// Vue.prototype.$imgpre = ''
 
 /* eslint-disable no-new */
 new Vue({

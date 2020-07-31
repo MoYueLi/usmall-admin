@@ -17,17 +17,19 @@
               <span>首页</span>
             </template>
           </el-menu-item>
-          <el-submenu v-if="user.menus[index].children" :index="item.id+''" :key="index" v-for="(item, index) in user.menus">
-            <template slot="title">
-              <i :class="item.icon"></i>
-              <span slot="title">{{item.title}}</span>
-            </template>
-            <el-menu-item v-for="child in item.children" :key="child.id" :index="child.url">{{child.title}}
+          <template v-for="(item, index) in user.menus">
+            <el-submenu v-if="user.menus[index].children" :index="item.id+''" :key="item.id" >
+              <template slot="title">
+                <i :class="item.icon"></i>
+                <span slot="title">{{item.title}}</span>
+              </template>
+              <el-menu-item v-for="child in item.children" :key="child.id" :index="child.url">{{child.title}}
+              </el-menu-item>
+            </el-submenu>
+            <el-menu-item v-if="!user.menus[index].children" :key="item.id"
+                          :index="item.url">{{item.title}}
             </el-menu-item>
-          </el-submenu>
-          <el-menu-item v-if="!user.menus[index].children" v-for="(child, index) in user.menus" :key="index"
-                        :index="child.url">{{child.title}}
-          </el-menu-item>
+          </template>
         </el-menu>
 
       </el-aside>

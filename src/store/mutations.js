@@ -5,7 +5,11 @@ export const state = {
 export const mutations = {
   changeUser (state, list) {
     state.admin = list
-    sessionStorage.setItem('user', JSON.stringify(state.admin))
+    if (list) {
+      sessionStorage.setItem('user', JSON.stringify(state.admin))
+    } else {
+      sessionStorage.removeItem('user')
+    }
   }
 }
 

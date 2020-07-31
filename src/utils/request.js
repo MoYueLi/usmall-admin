@@ -12,9 +12,9 @@ axios.interceptors.request.use(config => {
 })
 
 axios.interceptors.response.use(res => {
-  console.group('请求数据' + res.config.url)
-  console.log(res)
-  console.groupEnd()
+  // console.group('请求数据' + res.config.url)
+  // console.log(res)
+  // console.groupEnd()
   if (res.data.msg === '登录已过期或访问权限受限') {
     router.push('login')
     return
@@ -24,6 +24,7 @@ axios.interceptors.response.use(res => {
 
 // 请求头
 const baseUrl = '/api'
+// const baseUrl = ''
 
 // 获取菜单列表
 export const reqMenuList = (params) => {

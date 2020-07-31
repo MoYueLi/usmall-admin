@@ -69,7 +69,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.list)
     if (!this.list.length) {
       this.reqTotal()
       this.reqList()

@@ -10,7 +10,7 @@
         <el-form-item label="用户名" label-width="80px" prop="username">
           <el-input v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="密码" label-width="80px" prop="password">
+        <el-form-item label="密码" label-width="80px">
           <el-input v-model="form.password" show-password autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="状态" label-width="80px">
@@ -50,9 +50,6 @@ export default {
         ],
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' }
         ]
       }
     }
@@ -83,6 +80,10 @@ export default {
       }
     },
     add () {
+      if (!this.form.password) {
+        warningAlert('请输入密码')
+        return
+      }
       this.$refs['manageForm'].validate((valid) => {
         if (valid) {
           reqUserAdd(this.form).then(res => {

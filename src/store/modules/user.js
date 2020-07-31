@@ -22,13 +22,10 @@ const mutations = {
 const actions = {
   // 请求管理员列表 需要一页的数量和第几页
   reqUserList (context) {
-    console.log('====================')
-    console.log(context)
     const params = {
       size: context.state.size,
       page: context.state.page
     }
-    console.log(params)
     reqUserList(params).then(res => {
       if (!res.data.list && context.state.page > 1) {
         context.commit('changePage', context.state.page - 1)
